@@ -9,9 +9,11 @@ return new class extends Migration {
     {
         Schema::create('layanan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_divisi')
-                  ->constrained('divisi')
-                  ->cascadeOnDelete();
+            $table->unsignedBigInteger('id_kategori');
+            $table->foreign('id_kategori')
+                ->references('id')
+                ->on('kategori')
+                ->onDelete('cascade');
 
             $table->string('nama');
             $table->text('deskripsi')->nullable();
