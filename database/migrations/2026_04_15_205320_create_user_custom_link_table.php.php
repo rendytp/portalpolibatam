@@ -5,18 +5,18 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
+   public function up(): void
     {
         Schema::create('user_custom_link', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('id_user')
-                  ->constrained('user')
-                  ->cascadeOnDelete();
-
-            $table->string('nama');
-            $table->string('url');
-
+            
+            // Ubah bagian ini agar merujuk ke tabel 'users'
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
+            
+            // Kolom lainnya (misalnya judul link dan url)
+            $table->string('judul_link');
+            $table->string('url_link');
+            
             $table->timestamps();
         });
     }

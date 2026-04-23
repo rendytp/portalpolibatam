@@ -5,22 +5,19 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
+   public function up(): void
     {
         Schema::create('user_favorit', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('id_user')
-                  ->constrained('user')
-                  ->cascadeOnDelete();
-
-            $table->foreignId('id_layanan')
-                  ->constrained('layanan')
-                  ->cascadeOnDelete();;
-
+            
+            // Cara modern: ini otomatis membuat kolom id_user (tipe unsignedBigInteger) 
+            // dan langsung menghubungkannya ke tabel 'users'
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
+            
+            // Kolom untuk ID layanan yang difavoritkan
+            $table->foreignId('id_layanan')->constrained('layanan')->onDelete('cascade');
+            
             $table->timestamps();
-
-            $table->unique(['id_user', 'id_layanan']);
         });
     }
 
