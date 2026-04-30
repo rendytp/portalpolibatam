@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+
 class AuthController extends Controller
 {
     // Menampilkan halaman Login
@@ -46,22 +47,37 @@ class AuthController extends Controller
     // Memproses data Login (Masuk Aplikasi)
     public function loginPost(Request $request)
     {
-        // Coba login dengan username dan password yang diinput
         $credentials = [
             'username' => $request->username,
             'password' => $request->password,
         ];
 
-       // Jika cocok, arahkan ke beranda
         if (Auth::attempt($credentials)) {
-            // Regenerate session adalah standar keamanan wajib di Laravel terbaru
-            $request->session()->regenerate(); 
-            
-            // Arahkan ke rute 'beranda'
-            return redirect()->route('beranda');
+
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            // 🔥 ADMIN
+            if ($user->role === 'Admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            // 🔥 USER (mahasiswa, dosen, staff)
+            if (in_array($user->role, ['Mahasiswa', 'Dosen', 'Staff'])) {
+                return redirect()->route('user.dashboard');
+            }
+
+            // fallback kalau role tidak dikenali
+            Auth::logout();
+            return back()->with('error', 'Role tidak valid');
         }
 
-        // Jika salah, kembalikan ke halaman login
         return back()->with('error', 'Username atau password salah.');
+    }
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login'); // ⬅️ kembali ke login
     }
 }
