@@ -63,10 +63,10 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            // 🔥 USER (mahasiswa, dosen, staff)
-            if (in_array($user->role, ['Mahasiswa', 'Dosen', 'Staff'])) {
-                return redirect()->route('user.dashboard');
-            }
+           if (in_array($user->role, ['Mahasiswa', 'Dosen', 'Staff'])) {
+             return redirect()->route('beranda'); 
+            
+             }
 
             // fallback kalau role tidak dikenali
             Auth::logout();
@@ -78,6 +78,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('login'); // ⬅️ kembali ke login
+        return redirect()->route('login'); // kembali ke login
     }
 }
