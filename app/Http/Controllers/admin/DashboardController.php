@@ -10,12 +10,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 📊 TOTAL
+        // =====================
+        // CARD STATISTIK
+        // =====================
+
         $totalLayanan = DB::table('layanan')->count();
+
         $totalKategori = DB::table('kategori')->count();
+
         $totalUser = DB::table('users')->count();
 
-        // 🔥 Layanan bulan ini
         $layananBulanIni = DB::table('layanan')
             ->whereMonth('created_at', Carbon::now()->month)
             ->count();
@@ -24,7 +28,6 @@ class DashboardController extends Controller
             ->where('is_active', 1)
             ->count();
 
-        // 🔥 User minggu ini
         $userMingguIni = DB::table('users')
             ->whereBetween('created_at', [
                 Carbon::now()->startOfWeek(),
@@ -32,14 +35,37 @@ class DashboardController extends Controller
             ])
             ->count();
 
-        // 🔥 User aktif (sementara semua user)
         $userAktif = DB::table('users')->count();
 
-        // 🔥 Persentase user aktif
         $persentaseUser = $totalUser > 0
             ? round(($userAktif / $totalUser) * 100)
             : 0;
 
+        // =====================
+        // LINE CHART
+        // =====================
+
+        $pertumbuhanUser = [];
+
+        for ($bulan = 1; $bulan <= 6; $bulan++) {
+
+            $pertumbuhanUser[] = DB::table('users')
+                ->whereMonth('created_at', $bulan)
+                ->count();
+        }
+
+        // =====================
+        // PIE CHART
+        // =====================
+
+        $layananChart = DB::table('kategori')
+        ->leftJoin('layanan', 'kategori.id', '=', 'layanan.id_kategori')
+        ->select(
+            'kategori.nama',
+            DB::raw('COUNT(layanan.id) as total')
+        )
+        ->groupBy('kategori.nama')
+        ->get();
         return view('admin.dashboard', compact(
             'totalLayanan',
             'totalKategori',
@@ -48,7 +74,9 @@ class DashboardController extends Controller
             'layananBulanIni',
             'layananAktif',
             'userMingguIni',
-            'persentaseUser'
+            'persentaseUser',
+            'pertumbuhanUser',
+            'layananChart'
         ));
     }
 }
