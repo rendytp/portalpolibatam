@@ -15,6 +15,7 @@ use App\Http\Controllers\admin\LayananController;
 use App\Http\Controllers\admin\KategoriController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\LinkController;
+use App\Http\Controllers\Admin\ProfilController;
 
 
 // ==========================================
@@ -105,4 +106,13 @@ Route::middleware(['auth', 'admin'])
 
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])
             ->name('links.delete');
+
+        // PROFIL
+        Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
+    
+        // Proses update username (URL: /admin/profil/update)
+        Route::put('/profil/update', [ProfilController::class, 'updateProfil'])->name('profil.update');
+        
+        // Proses update password baru (URL: /admin/profil/password)
+        Route::put('/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
     });

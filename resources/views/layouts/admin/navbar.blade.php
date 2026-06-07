@@ -56,7 +56,7 @@
 
                 </div>
 
-                <a href="#" class="dropdown-item py-2">
+                <a href="{{ route('admin.profil') }}" class="dropdown-item py-2">
                     <i class="bi bi-person me-2"></i>
                     Profil Saya
                 </a>
