@@ -84,12 +84,21 @@
                         @if(auth()->id() == $user->id)
                         <span class="text-muted-small">Admin aktif</span>
                         @else
-                        <form method="POST" action="{{ route('admin.users.delete', $user->id) }}" style="display:inline;">
+                        <form method="POST"
+                            action="{{ route('admin.users.delete', $user->id) }}"
+                            style="display:inline;"
+                            onsubmit="return confirm('Yakin ingin menghapus akun {{ $user->username }}?')">
+
                             @csrf
                             @method('DELETE')
-                            <button style="border:none; background:none;">
+
+                            <button type="submit"
+                                style="border:none; background:none;">
+
                                 <i class="fa fa-trash text-danger"></i>
+
                             </button>
+
                         </form>
                         @endif
 

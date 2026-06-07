@@ -6,25 +6,45 @@
     .card-link {
         border-radius: 15px;
         padding: 20px;
-        background: #f9fafc;
+        background: #fff;
+        border: 1px solid #e5e7eb;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         transition: 0.2s;
+        height: 100%;
     }
 
     .card-link:hover {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
 
     .icon-link {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
         background: #10b981;
-        border-radius: 10px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    .link-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+        word-break: break-word;
+    }
+
+    .link-url {
+        display: block;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-all;
     }
 
     .btn-gradient {
@@ -36,70 +56,131 @@
     }
 
     .btn-gradient:hover {
-        opacity: 0.9;
+        color: white;
+        opacity: .9;
+    }
+
+    .action-icon {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .action-icon i {
         cursor: pointer;
-        margin-left: 10px;
+        font-size: 15px;
+    }
+
+    .empty-state {
+        padding: 50px 20px;
+        text-align: center;
+        color: #6b7280;
+        background: #fff;
+        border-radius: 15px;
+        border: 1px solid #e5e7eb;
     }
 </style>
 
 <div class="container mt-4">
 
     {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h3><strong>Custom Links</strong></h3>
-            <p class="text-muted">Simpan link kustom Anda sendiri untuk akses cepat</p>
+            <h2 class="mb-1">
+                <strong>Custom Links</strong>
+            </h2>
+
+            <p class="text-muted mb-0">
+                Simpan link kustom Anda sendiri untuk akses cepat
+            </p>
         </div>
 
-        <button class="btn btn-gradient" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        <button class="btn btn-gradient"
+            data-bs-toggle="modal"
+            data-bs-target="#modalTambah">
+
             + Tambah Link
+
         </button>
+
     </div>
 
-    {{-- LIST CARD --}}
+    {{-- ALERT --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    {{-- CARD LIST --}}
     <div class="row">
 
         @forelse($data as $item)
-        <div class="col-md-4 mb-4">
-            <div class="card-link">
 
-                {{-- TITLE --}}
-                <div class="d-flex align-items-center mb-2">
+        <div class="col-md-4 mb-4">
+
+            <div class="card-link d-flex flex-column">
+
+                {{-- HEADER --}}
+                <div class="d-flex align-items-center mb-3">
+
                     <div class="icon-link">
                         <i class="fa fa-link"></i>
                     </div>
-                    <strong>{{ $item->judul_link }}</strong>
+
+                    <div class="ms-3">
+
+                        <div class="link-title">
+                            {{ $item->judul_link }}
+                        </div>
+
+                    </div>
+
                 </div>
 
                 {{-- URL --}}
-                <small class="text-muted">
+                <div class="link-url mb-4">
+
                     {{ $item->url_link }}
-                </small>
 
-                {{-- ACTION --}}
-                <div class="d-flex justify-content-between align-items-center mt-3">
+                </div>
 
-                    {{-- BUTTON BUKA --}}
-                    <a href="{{ $item->url_link }}" target="_blank" class="btn btn-gradient">
-                        <i class="fa fa-external-link-alt"></i> Buka
+                {{-- FOOTER --}}
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+
+                    <a href="{{ $item->url_link }}"
+                        target="_blank"
+                        class="btn btn-gradient">
+
+                        <i class="fa fa-external-link-alt"></i>
+                        Buka
+
                     </a>
 
-                    {{-- ICON --}}
                     <div class="action-icon">
 
                         {{-- EDIT --}}
-                        <i class="fa fa-pen text-primary"></i>
+                        <i class="fa fa-pen text-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal{{ $item->id }}">
+                        </i>
 
                         {{-- DELETE --}}
-                        <form method="POST" action="{{ route('admin.links.delete', $item->id) }}" style="display:inline;">
+                        <form method="POST"
+                            action="{{ route('admin.links.delete', $item->id) }}"
+                            onsubmit="return confirm('Yakin ingin menghapus link ini?')">
+
                             @csrf
                             @method('DELETE')
-                            <button style="border:none; background:none;">
+
+                            <button type="submit"
+                                style="border:none;background:none;padding:0;">
+
                                 <i class="fa fa-trash text-danger"></i>
+
                             </button>
+
                         </form>
 
                     </div>
@@ -107,12 +188,98 @@
                 </div>
 
             </div>
+
+        </div>
+        <!-- Modal Edit -->
+        <div class="modal fade"
+            id="editModal{{ $item->id }}"
+            tabindex="-1">
+
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                    <form method="POST"
+                        action="{{ route('admin.links.update', $item->id) }}">
+
+                        @csrf
+                        @method('PUT')
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Link</h5>
+
+                            <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Judul Link
+                                </label>
+
+                                <input type="text"
+                                    name="judul_link"
+                                    class="form-control"
+                                    value="{{ $item->judul_link }}"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    URL Link
+                                </label>
+
+                                <input type="url"
+                                    name="url_link"
+                                    class="form-control"
+                                    value="{{ $item->url_link }}"
+                                    required>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                                Batal
+                            </button>
+
+                            <button type="submit"
+                                class="btn btn-primary">
+                                Update
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
         @empty
 
-        {{-- EMPTY STATE --}}
-        <div class="col-12 text-center">
-            <p class="text-muted">Belum ada custom link</p>
+        <div class="col-12">
+
+            <div class="empty-state">
+
+                <i class="fa fa-link fa-3x mb-3"></i>
+
+                <h5>Belum Ada Custom Link</h5>
+
+                <p class="mb-0">
+                    Tambahkan link pertama Anda untuk akses cepat.
+                </p>
+
+            </div>
+
         </div>
 
         @endforelse
@@ -122,34 +289,89 @@
 </div>
 
 {{-- MODAL TAMBAH --}}
-<div class="modal fade" id="modalTambah">
+<div class="modal fade"
+    id="modalTambah"
+    tabindex="-1">
+
     <div class="modal-dialog">
+
         <div class="modal-content">
 
-            <form method="POST" action="{{ route('admin.links.store') }}">
+            <form method="POST"
+                action="{{ route('admin.links.store') }}">
+
                 @csrf
 
                 <div class="modal-header">
-                    <h5>Tambah Link</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                    <h5 class="modal-title">
+                        Tambah Link
+                    </h5>
+
+                    <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
                 </div>
 
                 <div class="modal-body">
 
-                    <input type="text" name="judul_link" class="form-control mb-3" placeholder="Judul Link" required>
+                    <div class="mb-3">
 
-                    <input type="text" name="url_link" class="form-control" placeholder="URL Link" required>
+                        <label class="form-label">
+                            Judul Link
+                        </label>
+
+                        <input type="text"
+                            name="judul_link"
+                            class="form-control"
+                            placeholder="Contoh: Portal Akademik"
+                            required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            URL Link
+                        </label>
+
+                        <input type="url"
+                            name="url_link"
+                            class="form-control"
+                            placeholder="https://example.com"
+                            required>
+
+                    </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-gradient">Simpan</button>
+
+                    <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Batal
+
+                    </button>
+
+                    <button type="submit"
+                        class="btn btn-gradient">
+
+                        Simpan
+
+                    </button>
+
                 </div>
 
             </form>
 
         </div>
+
     </div>
+
 </div>
 
 @endsection

@@ -15,44 +15,65 @@
     @stack('styles')
 
     <style>
+        /* ========================================
+   GLOBAL
+======================================== */
         body {
             background: #f4f6f9;
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* ===== SIDEBAR ===== */
+        .content {
+            padding: 20px;
+        }
+
+        /* ========================================
+   SIDEBAR
+======================================== */
         .sidebar {
             width: 250px;
             min-height: 100vh;
             background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            transition: 0.3s;
+            border-right: 1px solid #e5e7eb;
+            overflow-x: hidden;
+            transition: .3s;
         }
 
         .sidebar.collapsed {
-            width: 70px;
+            width: 75px;
+        }
+
+        .sidebar-logo span {
+            color: #111827;
+            white-space: nowrap;
         }
 
         .sidebar .nav-link {
-            color: #555;
-            padding: 10px 15px;
-            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 12px;
+            color: #4b5563;
+            transition: .2s;
+        }
+
+        .sidebar .nav-link i {
+            min-width: 20px;
         }
 
         .sidebar .nav-link:hover {
-            background: #f0f3ff;
+            background: #f3f4f6;
         }
 
         .sidebar .nav-link.active {
-            background: linear-gradient(135deg, #4e73df, #224abe);
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: #fff;
         }
 
         .sidebar.collapsed span,
-        .sidebar.collapsed h5 {
+        .sidebar.collapsed .sidebar-logo span {
             display: none;
         }
 
@@ -60,42 +81,18 @@
             justify-content: center;
         }
 
-        /* ===== NAVBAR ===== */
+        /* ========================================
+   NAVBAR
+======================================== */
         .navbar-custom {
             background: #fff;
             padding: 15px 25px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .content {
-            padding: 20px;
-        }
-
-        /* ===== DARK MODE ===== */
-        body.dark-mode {
-            background: #121212;
-            color: #e4e6eb;
-        }
-
-        body.dark-mode .sidebar,
-        body.dark-mode .navbar-custom {
-            background: #1e1e2f;
-        }
-
-        body.dark-mode .nav-link {
-            color: #bbb;
-        }
-
-        body.dark-mode .nav-link:hover {
-            background: #2a2d3e;
-        }
-
-        body.dark-mode .nav-link.active {
-            background: linear-gradient(135deg, #4e73df, #6f42c1);
-        }
-
-        body.dark-mode .card {
-            background: #1e1e2f;
+        .username-text {
+            font-weight: 500;
+            color: #111827;
         }
 
         .divider {
@@ -104,18 +101,336 @@
             background: #ddd;
         }
 
+        #darkToggle {
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        /* ========================================
+   CUSTOM LINK
+======================================== */
+        .link-title {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .link-url {
+            color: #6b7280;
+        }
+
+        .icon-link {
+            background: #10b981;
+        }
+
+        /* ========================================
+   BADGES
+======================================== */
+        .badge-kategori,
+        .badge-status,
+        .badge-role {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-kategori {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .badge-status {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge-role {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        /* ========================================
+   DROPDOWN USER
+======================================== */
+        .dropdown-username {
+            color: #111827;
+        }
+
+        .dropdown-role {
+            color: #6b7280;
+        }
+
+        /* ========================================
+   DARK MODE - BASE
+======================================== */
+        body.dark-mode {
+            background: #121212;
+            color: #fff;
+        }
+
+        /* ========================================
+   DARK MODE - NAVBAR
+======================================== */
+        body.dark-mode .navbar-custom {
+            background: #1e1e2f;
+            border-bottom: 1px solid #32364d;
+        }
+
+        body.dark-mode .navbar-icon,
+        body.dark-mode .username-text,
+        body.dark-mode .sidebar-logo span {
+            color: #fff !important;
+        }
+
         body.dark-mode .divider {
             background: #444;
         }
 
-        #darkToggle {
-            background: #f1f3f5;
-            border-radius: 10px;
+        body.dark-mode #darkToggle {
+            background: #32364d;
+            color: #fff;
         }
 
-        body.dark-mode #darkToggle {
-            background: #3a3f5c;
+        /* ========================================
+   DARK MODE - SIDEBAR
+======================================== */
+        body.dark-mode .sidebar {
+            background: #1e1e2f;
+            border-right: 1px solid #32364d;
+        }
+
+        body.dark-mode .nav-link {
+            color: #d1d5db;
+        }
+
+        body.dark-mode .nav-link:hover {
+            background: #2d3148;
+        }
+
+        body.dark-mode .nav-link.active {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        }
+
+        /* ========================================
+   DARK MODE - TYPOGRAPHY
+======================================== */
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3,
+        body.dark-mode h4,
+        body.dark-mode h5,
+        body.dark-mode h6,
+        body.dark-mode strong {
+            color: #fff !important;
+        }
+
+        body.dark-mode p,
+        body.dark-mode span,
+        body.dark-mode label,
+        body.dark-mode td,
+        body.dark-mode th,
+        body.dark-mode li {
+            color: #e4e6eb !important;
+        }
+
+        body.dark-mode .text-muted,
+        body.dark-mode .text-muted-small {
+            color: #b0b3b8 !important;
+        }
+
+        /* ========================================
+   DARK MODE - CARD
+======================================== */
+        body.dark-mode .card,
+        body.dark-mode .card-custom,
+        body.dark-mode .card-link,
+        body.dark-mode .empty-state {
+            background: #1e1e2f !important;
+            border: 1px solid #32364d !important;
+            color: #fff !important;
+        }
+
+        body.dark-mode .link-title {
+            color: #fff !important;
+        }
+
+        body.dark-mode .link-url,
+        body.dark-mode .empty-state p {
+            color: #b0b3b8 !important;
+        }
+
+        body.dark-mode .icon-link {
+            background: #059669;
+        }
+
+        /* ========================================
+   DARK MODE - TABLE
+======================================== */
+        body.dark-mode .table {
+            color: #fff !important;
+        }
+
+        body.dark-mode .table thead th {
+            background: #252836 !important;
+            color: #fff !important;
+            border-color: #32364d !important;
+        }
+
+        body.dark-mode .table tbody td {
+            background: #1e1e2f !important;
+            color: #e5e7eb !important;
+            border-color: #32364d !important;
+        }
+
+        body.dark-mode .table tbody tr:hover td {
+            background: #252836 !important;
+        }
+
+        /* ========================================
+   DARK MODE - FORM
+======================================== */
+        body.dark-mode .form-control,
+        body.dark-mode .form-select,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #2a2d3e !important;
+            color: #fff !important;
+            border: 1px solid #444 !important;
+        }
+
+        body.dark-mode .form-control:focus,
+        body.dark-mode .form-select:focus,
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
+            background: #2a2d3e !important;
+            color: #fff !important;
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 .2rem rgba(99, 102, 241, .25);
+        }
+
+        body.dark-mode input::placeholder,
+        body.dark-mode textarea::placeholder,
+        body.dark-mode .form-control::placeholder {
+            color: #9ca3af !important;
+        }
+
+        body.dark-mode select option {
+            background: #1e1e2f;
             color: #fff;
+        }
+
+        /* ========================================
+   DARK MODE - CHECKBOX
+======================================== */
+        body.dark-mode .form-check-label {
+            color: #fff !important;
+        }
+
+        body.dark-mode .form-check-input {
+            background: #2a2d3e;
+            border-color: #555;
+        }
+
+        body.dark-mode .form-check-input:checked {
+            background: #6366f1;
+            border-color: #6366f1;
+        }
+
+        /* ========================================
+   DARK MODE - MODAL
+======================================== */
+        body.dark-mode .modal-content {
+            background: #1e1e2f !important;
+            color: #fff !important;
+            border: 1px solid #32364d;
+        }
+
+        body.dark-mode .modal-header,
+        body.dark-mode .modal-footer {
+            background: #252836 !important;
+            border-color: #32364d !important;
+        }
+
+        body.dark-mode .modal-title,
+        body.dark-mode .modal label {
+            color: #fff !important;
+        }
+
+        body.dark-mode .btn-close {
+            filter: invert(1);
+        }
+
+        /* ========================================
+   DARK MODE - DROPDOWN
+======================================== */
+        body.dark-mode .dropdown-menu,
+        body.dark-mode .custom-dropdown {
+            background: #252836 !important;
+            border: 1px solid #32364d !important;
+        }
+
+        body.dark-mode .dropdown-item {
+            color: #fff !important;
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background: #32364d !important;
+        }
+
+        body.dark-mode .dropdown-username {
+            color: #fff !important;
+        }
+
+        body.dark-mode .dropdown-role {
+            color: #b0b3b8 !important;
+        }
+
+        body.dark-mode .dropdown-divider,
+        body.dark-mode .border-bottom {
+            border-color: #32364d !important;
+        }
+
+        /* ========================================
+   DARK MODE - ALERT
+======================================== */
+        body.dark-mode .alert-success {
+            background: #143d2d;
+            border-color: #1d5a42;
+            color: #c6f6d5;
+        }
+
+        /* ========================================
+   DARK MODE - LINKS
+======================================== */
+        body.dark-mode a {
+            color: #8ab4ff;
+        }
+
+        /* ========================================
+   DARK MODE - BADGES
+======================================== */
+        body.dark-mode .badge-kategori {
+            background: rgba(37, 99, 235, .2) !important;
+            color: #60a5fa !important;
+            border: 1px solid rgba(96, 165, 250, .3);
+        }
+
+        body.dark-mode .badge-status {
+            background: rgba(22, 163, 74, .2) !important;
+            color: #4ade80 !important;
+            border: 1px solid rgba(74, 222, 128, .3);
+        }
+
+        body.dark-mode .badge-role {
+            background: rgba(147, 51, 234, .2) !important;
+            color: #c084fc !important;
+            border: 1px solid rgba(192, 132, 252, .3);
+        }
+
+        body.dark-mode .badge.bg-danger {
+            background: rgba(220, 38, 38, .2) !important;
+            color: #f87171 !important;
+            border: 1px solid rgba(248, 113, 113, .3);
         }
     </style>
 </head>
