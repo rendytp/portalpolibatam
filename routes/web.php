@@ -37,6 +37,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // PERHATIKAN: Sekarang kita menggunakan UserDashboardController
     Route::get('/beranda', [UserDashboardController::class, 'index'])->name('beranda');
+    Route::post('/favorit/{id}/toggle', [UserDashboardController::class, 'toggleFavorit'])->name('favorit.toggle');
     Route::get('/cari-layanan', [UserDashboardController::class, 'cari'])->name('cari');
     Route::get('/favorit-saya', [UserDashboardController::class, 'favorit'])->name('favorit');
     
