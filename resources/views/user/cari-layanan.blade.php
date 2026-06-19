@@ -40,11 +40,19 @@
                 </form>
             </div>
             
-            <h4 class="font-bold text-lg mb-1">{{ $layanan->nama }}</h4>
+           <h4 class="font-bold text-lg mb-1">{{ $layanan->nama }}</h4>
             
             <div class="flex items-center gap-2 mb-3">
-                <span class="w-2 h-2 rounded-full {{ $layanan->is_active ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
-                <span class="text-xs font-bold {{ $layanan->is_active ? 'text-emerald-500' : 'text-slate-500' }}">{{ $layanan->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                @if($layanan->is_active == 1)
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-xs font-bold text-emerald-500">Aktif</span>
+                @elseif($layanan->is_active == 2)
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                    <span class="text-xs font-bold text-orange-500">Sedang Gangguan</span>
+                @else
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span class="text-xs font-bold text-red-500">Non-aktif</span>
+                @endif
             </div>
             
             <p class="text-sm text-slate-500 dark:text-slate-400 flex-1 mb-4">{{ $layanan->deskripsi }}</p>
@@ -53,15 +61,17 @@
                 <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full">{{ $layanan->nama_kategori ?? 'Umum' }}</span>
             </div>
             
-                   @if($layanan->is_active)
+            @if($layanan->is_active == 1)
                 <a href="{{ $layanan->url ? (str_starts_with($layanan->url, 'http') ? $layanan->url : 'https://' . $layanan->url) : '#' }}" 
-                target="_blank" 
-                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm text-center rounded-xl shadow-md smooth-transition flex justify-center items-center gap-2">
+                   target="_blank" 
+                   class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm text-center rounded-xl shadow-md smooth-transition flex justify-center items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     Akses Layanan
                 </a>
+            @elseif($layanan->is_active == 2)
+                <button disabled class="w-full py-3 bg-orange-50 dark:bg-orange-900/20 text-orange-500 dark:text-orange-400 font-bold text-sm text-center rounded-xl cursor-not-allowed border border-orange-200 dark:border-orange-800">Sedang Gangguan</button>
             @else
-                <button disabled class="w-full py-3 bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-bold text-sm text-center rounded-xl cursor-not-allowed">Layanan Tidak Tersedia</button>
+                <button disabled class="w-full py-3 bg-red-50 dark:bg-red-900/20 text-red-400 dark:text-red-300 font-bold text-sm text-center rounded-xl cursor-not-allowed border border-red-200 dark:border-red-800">Layanan Tidak Tersedia</button>
             @endif
         </div>
         @empty

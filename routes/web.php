@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-// 1. IMPORT CONTROLLER USER & AUTH (Pastikan folder huruf kecil sesuai strukturmu)
+// 1. IMPORT CONTROLLER USER & AUTH
 use App\Http\Controllers\user\HomeController;
 use App\Http\Controllers\auth\AuthController;
 // Kita beri nama alias "UserDashboardController"
@@ -15,7 +15,7 @@ use App\Http\Controllers\admin\LayananController;
 use App\Http\Controllers\admin\KategoriController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\LinkController;
-use App\Http\Controllers\Admin\ProfilController;
+use App\Http\Controllers\admin\ProfilController; // Pastikan 'admin' huruf kecil agar sama dengan yang lain
 
 
 // ==========================================
@@ -37,16 +37,21 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // RUTE USER (Wajib Login)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
-    // PERHATIKAN: Sekarang kita menggunakan UserDashboardController
     Route::get('/beranda', [UserDashboardController::class, 'index'])->name('beranda');
     Route::post('/favorit/{id}/toggle', [UserDashboardController::class, 'toggleFavorit'])->name('favorit.toggle');
     Route::get('/cari-layanan', [UserDashboardController::class, 'cari'])->name('cari');
     Route::get('/favorit-saya', [UserDashboardController::class, 'favorit'])->name('favorit');
 
+    // PERBAIKAN CUSTOM LINKS: Menambahkan rute Update (PUT) dan Delete (DELETE)
     Route::get('/custom-links', [UserDashboardController::class, 'customLinks'])->name('custom.links');
     Route::post('/custom-links', [UserDashboardController::class, 'storeCustomLink'])->name('custom.links.store');
+    Route::put('/custom-links/{id}', [UserDashboardController::class, 'updateCustomLink'])->name('custom.links.update');
+    Route::delete('/custom-links/{id}', [UserDashboardController::class, 'deleteCustomLink'])->name('custom.links.delete');
 
+    // TAMPILAN PROFIL & PROSES UPDATE PROFIL USER
     Route::get('/profil-saya', [UserDashboardController::class, 'profil'])->name('profil');
+    Route::put('/profil-saya/update', [UserDashboardController::class, 'updateProfil'])->name('profil.update');
+    Route::put('/profil-saya/password', [UserDashboardController::class, 'updatePassword'])->name('profil.password');
 });
 
 
@@ -58,62 +63,32 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // LAYANAN
-        Route::get('/layanan', [LayananController::class, 'index'])
-            ->name('layanan');
-
-        Route::post('/layanan', [LayananController::class, 'store'])
-            ->name('layanan.store');
-
-        Route::put('/layanan/{id}', [LayananController::class, 'update'])
-            ->name('layanan.update');
-
-        Route::delete('/layanan/{id}', [LayananController::class, 'destroy'])
-            ->name('layanan.delete');
+        Route::get('/layanan', [LayananController::class, 'index'])->name('layanan');
+        Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');
+        Route::put('/layanan/{id}', [LayananController::class, 'update'])->name('layanan.update');
+        Route::delete('/layanan/{id}', [LayananController::class, 'destroy'])->name('layanan.delete');
 
         // KATEGORI
-        Route::get('/admin/kategori', [KategoriController::class, 'index'])
-            ->name('kategori');
-
-        Route::post('/admin/kategori', [KategoriController::class, 'store'])
-            ->name('kategori.store');
-
-        Route::put('/admin/kategori/{id}', [KategoriController::class, 'update'])
-            ->name('kategori.update');
-
-        Route::delete('/admin/kategori/{id}', [KategoriController::class, 'destroy'])
-            ->name('kategori.delete');
-
+        Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
+        Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+        Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+        Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.delete');
 
         // USERS
-        Route::get('/users', [UserController::class, 'index'])
-            ->name('users');
-
-        Route::delete('/users/{id}', [UserController::class, 'destroy'])
-            ->name('users.delete');
+        Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.delete');
 
         // LINKS
-        Route::get('/links', [LinkController::class, 'index'])
-            ->name('links');
-
-        Route::post('/links', [LinkController::class, 'store'])
-            ->name('links.store');
-
-        Route::put('/links/{id}', [LinkController::class, 'update'])
-            ->name('links.update');
-
-        Route::delete('/links/{id}', [LinkController::class, 'destroy'])
-            ->name('links.delete');
+        Route::get('/links', [LinkController::class, 'index'])->name('links');
+        Route::post('/links', [LinkController::class, 'store'])->name('links.store');
+        Route::put('/links/{id}', [LinkController::class, 'update'])->name('links.update');
+        Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.delete');
 
         // PROFIL
         Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
-    
-        // Proses update username (URL: /admin/profil/update)
         Route::put('/profil/update', [ProfilController::class, 'updateProfil'])->name('profil.update');
-        
-        // Proses update password baru (URL: /admin/profil/password)
         Route::put('/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
     });
