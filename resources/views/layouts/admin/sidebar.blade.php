@@ -46,7 +46,7 @@
         <li class="mb-2">
             <a href="{{ route('admin.kategori') }}"
                 class="nav-link {{ request()->routeIs('admin.kategori*') ? 'active' : '' }}">
-                <i class="bi bi-box"></i>
+                <i class="bi bi-border-width"></i>
                 <span>Kelola Kategori</span>
             </a>
         </li>
