@@ -3,18 +3,188 @@
 @section('content')
 
 <style>
-    .card-custom { border-radius: 15px; padding: 20px; background: #f9fafc; box-shadow: 0 4px 15px rgba(0, 0, 0, .05); }
-    .search-input { border-radius: 25px; padding-left: 40px; }
-    .badge-kategori { background: #e0edff; color: #2563eb; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-    
-    /* 3 Warna Status */
-    .badge-aktif { background: #c6f6d5; color: #2f855a; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight:bold; }
-    .badge-gangguan { background: #feebc8; color: #c05621; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight:bold; }
-    .badge-nonaktif { background: #fed7d7; color: #c53030; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight:bold; }
-    
-    .btn-gradient { background: linear-gradient(to right, #4f46e5, #6366f1); color: white; border: none; border-radius: 25px; padding: 8px 20px; }
-    .btn-gradient:hover { color: white; }
-    .modal-header { background: #f8fafc; }
+    /* =========================
+       CARD & FORM
+    ========================= */
+
+    .card-custom {
+        border-radius: 16px;
+        padding: 20px;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+        border: 1px solid #e5e7eb;
+    }
+
+    .search-input {
+        border-radius: 25px;
+        padding-left: 40px;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-gradient:hover {
+        color: white;
+        opacity: .95;
+    }
+
+    .modal-header {
+        background: #f8fafc;
+    }
+
+    /* =========================
+       KATEGORI
+    ========================= */
+
+    .badge-kategori {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #dbeafe;
+        color: #2563eb;
+        border: 1px solid #93c5fd;
+    }
+
+    /* =========================
+       STATUS BASE
+    ========================= */
+
+    .badge-status {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        min-width: 140px !important;
+        height: 30px !important;
+        padding: 0 14px !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        transition: all .3s ease;
+    }
+
+    .badge-status::before {
+        content: "" !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        display: inline-block !important;
+    }
+
+    /* =========================
+       AKTIF
+    ========================= */
+
+    span.badge-status.badge-aktif {
+        color: #16a34a !important;
+        background: rgba(34, 197, 94, 0.12) !important;
+        border: 1px solid rgba(34, 197, 94, 0.30) !important;
+    }
+
+    span.badge-status.badge-aktif::before {
+        background: #22c55e !important;
+    }
+
+    /* =========================
+       GANGGUAN
+    ========================= */
+
+    span.badge-status.badge-gangguan {
+        color: #d97706 !important;
+        background: rgba(245, 158, 11, 0.12) !important;
+        border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    }
+
+    span.badge-status.badge-gangguan::before {
+        background: #f59e0b !important;
+    }
+
+    /* =========================
+       NONAKTIF
+    ========================= */
+
+    span.badge-status.badge-nonaktif {
+        color: #dc2626 !important;
+        background: rgba(239, 68, 68, 0.12) !important;
+        border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    }
+
+    span.badge-status.badge-nonaktif::before {
+        background: #ef4444 !important;
+    }
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    [data-bs-theme="dark"] .card-custom {
+        background: #232336;
+        border-color: #34344e;
+    }
+
+    [data-bs-theme="dark"] .badge-kategori {
+        background: rgba(59, 130, 246, .15);
+        color: #60a5fa;
+        border-color: rgba(59, 130, 246, .35);
+    }
+
+    /* DARK - AKTIF */
+    [data-bs-theme="dark"] span.badge-status.badge-aktif {
+        color: #4ade80 !important;
+        background: rgba(34, 197, 94, 0.15) !important;
+        border: 1px solid rgba(34, 197, 94, 0.35) !important;
+    }
+
+    [data-bs-theme="dark"] span.badge-status.badge-aktif::before {
+        background: #4ade80 !important;
+    }
+
+    /* DARK - GANGGUAN */
+    [data-bs-theme="dark"] span.badge-status.badge-gangguan {
+        color: #fbbf24 !important;
+        background: rgba(245, 158, 11, 0.15) !important;
+        border: 1px solid rgba(245, 158, 11, 0.40) !important;
+    }
+
+    [data-bs-theme="dark"] span.badge-status.badge-gangguan::before {
+        background: #fbbf24 !important;
+    }
+
+    /* DARK - NONAKTIF */
+    [data-bs-theme="dark"] span.badge-status.badge-nonaktif {
+        color: #f87171 !important;
+        background: rgba(239, 68, 68, 0.15) !important;
+        border: 1px solid rgba(239, 68, 68, 0.40) !important;
+    }
+
+    [data-bs-theme="dark"] span.badge-status.badge-nonaktif::before {
+        background: #f87171 !important;
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    table tbody tr {
+        transition: .2s;
+    }
+
+    table tbody tr:hover {
+        background: rgba(99, 102, 241, 0.04);
+    }
+
+    [data-bs-theme="dark"] table tbody tr:hover {
+        background: rgba(255, 255, 255, .03);
+    }
 </style>
 
 <div class="container mt-4">
@@ -69,11 +239,11 @@
                     </td>
                     <td>
                         @if($item->is_active == 1)
-                            <span class="badge-aktif">Aktif</span>
+                        <span class="badge-status badge-aktif">Aktif</span>
                         @elseif($item->is_active == 2)
-                            <span class="badge-gangguan">Sedang Gangguan</span>
+                        <span class="badge-status badge-gangguan">Sedang Gangguan</span>
                         @else
-                            <span class="badge-nonaktif">Non-aktif</span>
+                        <span class="badge-status badge-nonaktif">Nonaktif</span>
                         @endif
                     </td>
                     <td class="text-center">
@@ -90,6 +260,7 @@
                     </td>
                 </tr>
 
+                <!-- Modal Edit -->
                 <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -140,6 +311,7 @@
     </div>
 </div>
 
+<!-- Modal Tambah -->
 <div class="modal fade" id="tambahModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
