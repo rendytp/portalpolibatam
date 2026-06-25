@@ -3,11 +3,16 @@
 @section('content')
 
 <style>
+    /* =========================
+       CARD & FORM
+    ========================= */
+
     .card-custom {
-        border-radius: 15px;
+        border-radius: 16px;
         padding: 20px;
-        background: #f9fafc;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+        border: 1px solid #e5e7eb;
     }
 
     .search-input {
@@ -15,125 +20,218 @@
         padding-left: 40px;
     }
 
+    /* =========================
+       BADGE ROLE
+    ========================= */
+
     .badge-role {
-        background: #f3e8ff;
-        color: #9333ea;
-        padding: 5px 12px;
-        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 14px;
+        border-radius: 999px;
         font-size: 12px;
+        font-weight: 600;
     }
 
-    .user-icon {
-        color: #2563eb;
-        margin-right: 8px;
+    .badge-role.badge-admin {
+        color: #7c3aed;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.30);
     }
 
-    .text-muted-small {
-        color: #888;
+    .badge-role.badge-staff {
+        color: #0369a1;
+        background: rgba(3, 105, 161, 0.12);
+        border: 1px solid rgba(3, 105, 161, 0.30);
+    }
+
+    /* =========================
+       BOOKMARK BADGE
+    ========================= */
+
+    .badge-bookmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #374151;
+        background: rgba(107, 114, 128, 0.10);
+        border: 1px solid rgba(107, 114, 128, 0.25);
+    }
+
+    .badge-bookmark i {
+        font-size: 11px;
+    }
+
+    /* =========================
+       AVATAR
+    ========================= */
+
+    .user-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
         font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    [data-bs-theme="dark"] .card-custom {
+        background: #232336;
+        border-color: #34344e;
+    }
+
+    [data-bs-theme="dark"] .badge-role.badge-admin {
+        color: #a78bfa;
+        background: rgba(124, 58, 237, 0.18);
+        border-color: rgba(124, 58, 237, 0.35);
+    }
+
+    [data-bs-theme="dark"] .badge-role.badge-staff {
+        color: #38bdf8;
+        background: rgba(3, 105, 161, 0.18);
+        border-color: rgba(3, 105, 161, 0.35);
+    }
+
+    [data-bs-theme="dark"] .badge-bookmark {
+        color: #9ca3af;
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    table tbody tr {
+        transition: .2s;
+    }
+
+    table tbody tr:hover {
+        background: rgba(99, 102, 241, 0.04);
+    }
+
+    [data-bs-theme="dark"] table tbody tr:hover {
+        background: rgba(255, 255, 255, .03);
+    }
+
+    .text-you {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-left: 4px;
     }
 </style>
 
 <div class="container mt-4">
 
-    <h3><strong>Kelola Pengguna</strong></h3>
+    <h2 class="mb-1"><strong>Kelola Pengguna</strong></h2>
     <p class="text-muted">Lihat dan kelola data pengguna yang terdaftar</p>
 
-    <div class="card-custom mt-4">
+    @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-        {{-- SEARCH --}}
-        <div class="position-relative mb-4">
+    <div class="card-custom mt-4">
+        <div class="position-relative mb-3">
             <i class="fa fa-search position-absolute" style="top:10px; left:15px; color:#aaa;"></i>
-            <input type="text" id="searchUser" class="form-control search-input" placeholder="Cari pengguna...">
+            <input type="text" id="search" class="form-control search-input" placeholder="Cari pengguna...">
         </div>
 
-        {{-- TABLE --}}
         <table class="table align-middle">
             <thead>
                 <tr>
                     <th>Username</th>
                     <th>Role</th>
                     <th>Jumlah Bookmark</th>
-                    <th class="text-end">Aksi</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
-
-            <tbody id="userTable">
-                @forelse($data as $user)
+            <tbody id="tableBody">
+                @forelse($data as $item)
                 <tr>
                     <td>
-                        <i class="fa fa-user user-icon"></i>
-                        {{ $user->username }}
-                        @if(auth()->id() == $user->id)
-                        <span class="text-muted-small">(Anda)</span>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                {{ strtoupper(substr($item->username, 0, 1)) }}
+                            </div>
+                            <div>
+                                <strong>{{ $item->username }}</strong>
+                                @if($item->id == auth()->id())
+                                <span class="text-you">(Anda)</span>
+                                @endif
+                                @if($item->nama)
+                                <br><small class="text-muted">{{ $item->nama }}</small>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        @if(strtolower($item->role) == 'admin')
+                        <span class="badge-role badge-admin">Admin</span>
+                        @else
+                        <span class="badge-role badge-staff">Staff</span>
                         @endif
                     </td>
-
                     <td>
-                        <span class="badge-role">
-                            {{ $user->role ?? 'User' }}
+                        <span class="badge-bookmark">
+                            <i class="fas fa-bookmark"></i>
+                            {{ $item->jumlah_bookmark }}
                         </span>
                     </td>
-
-                    <td>
-                        {{ $user->bookmarks_count ?? 0 }}
-                    </td>
-
-                    <td class="text-end">
-
-                        @if(auth()->id() == $user->id)
-                        <span class="text-muted-small">Admin aktif</span>
+                    <td class="text-center">
+                        @if($item->id == auth()->id())
+                        <span class="text-muted small">Admin aktif</span>
                         @else
-                        <form method="POST"
-                            action="{{ route('admin.users.delete', $user->id) }}"
-                            style="display:inline;"
-                            onsubmit="return confirm('Yakin ingin menghapus akun {{ $user->username }}?')">
-
+                        <form method="POST" action="{{ route('admin.users.delete', $item->id) }}" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
                             @csrf
                             @method('DELETE')
-
-                            <button type="submit"
-                                style="border:none; background:none;">
-
-                                <i class="fa fa-trash text-danger"></i>
-
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
                             </button>
-
                         </form>
                         @endif
-
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center text-muted">
-                        Tidak ada pengguna yang ditemukan
-                    </td>
+                    <td colspan="4" class="text-center">Belum ada data pengguna</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
 
-        {{-- FOOTER --}}
-        <hr>
-        <p class="text-muted-small">
-            Total Pengguna: <strong>{{ count($data) }}</strong> (termasuk Anda)
-        </p>
-
+        <div class="mt-2">
+            <small class="text-muted">Total Pengguna: <strong>{{ $data->count() }}</strong> (termasuk Anda)</small>
+        </div>
     </div>
-
 </div>
 
-{{-- SEARCH REALTIME --}}
 <script>
-    document.getElementById('searchUser').addEventListener('keyup', function() {
+    document.getElementById('search').addEventListener('keyup', function() {
         let value = this.value.toLowerCase();
-        let rows = document.querySelectorAll("#userTable tr");
-
+        let rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
         });
     });
 </script>
-
 @endsection
