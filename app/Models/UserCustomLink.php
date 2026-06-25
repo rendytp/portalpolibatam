@@ -11,6 +11,7 @@ class UserCustomLink extends Model
     protected $fillable = [
         'id_user',
         'judul_link',
-        'url_link'
+        'url_link',
+        'deskripsi'
     ];
 }

@@ -16,6 +16,7 @@ return new class extends Migration {
             // Kolom lainnya (misalnya judul link dan url)
             $table->string('judul_link');
             $table->string('url_link');
+            $table->string('deskripsi');
             
             $table->timestamps();
         });
