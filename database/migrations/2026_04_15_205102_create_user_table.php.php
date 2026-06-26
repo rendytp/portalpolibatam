@@ -9,8 +9,6 @@
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // Ini yang penting: gunakan username, bukan name
-            $table->string('nama')->nullable();
             $table->string('username')->unique(); 
             $table->string('password');
             $table->string('role')->default('Staff'); // Tambahkan role
