@@ -118,7 +118,7 @@ class DashboardController extends Controller
             
         return view('user.custom-links', compact('links'));
     }
-
+    
     // Menyimpan Custom Link Baru (dengan deskripsi)
     public function storeCustomLink(Request $request)
     {
@@ -127,16 +127,28 @@ class DashboardController extends Controller
             'url_link' => 'required|url',
         ]);
 
-        DB::table('user_custom_link')->insert([
-            'id_user' => Auth::user()->id,
-            'judul_link' => $request->judul_link,
-            'url_link' => $request->url_link,
-            'deskripsi' => $request->deskripsi, 
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        try {
+            DB::table('user_custom_link')->insert([
+                'id_user' => Auth::user()->id,
+                'judul_link' => $request->judul_link,
+                'url_link' => $request->url_link,
+                'deskripsi' => $request->deskripsi, 
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            
+            return back()->with('success', 'Link berhasil ditambahkan!');
 
-        return back()->with('success', 'Link berhasil ditambahkan!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Kode 23000 adalah kode SQL untuk Integrity Constraint Violation 
+            // (termasuk pelanggaran UNIQUE constraint yang baru saja kamu buat)
+            if ($e->getCode() == 23000) {
+                return back()->withErrors(['msg' => 'Judul link ini sudah pernah kamu gunakan untuk akun Anda!']);
+            }
+            
+            // Jika error lain, lempar kembali atau tampilkan pesan umum
+            return back()->withErrors(['msg' => 'Terjadi kesalahan pada database.']);
+        }
     }
 
     // Mengupdate Custom Link (dengan deskripsi)
