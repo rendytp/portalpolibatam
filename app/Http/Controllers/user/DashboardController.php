@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; // WAJIB DITAMBAHKAN untuk enkripsi password
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index() 
     {
         $user = Auth::user();
         
@@ -118,13 +119,24 @@ class DashboardController extends Controller
             
         return view('user.custom-links', compact('links'));
     }
-    
+
     // Menyimpan Custom Link Baru (dengan deskripsi)
     public function storeCustomLink(Request $request)
     {
+        // Tambahkan custom message di parameter ketiga
         $request->validate([
-            'judul_link' => 'required|string|max:255',
+            'judul_link' => [
+                'required', 
+                'string', 
+                'max:255',
+                \Illuminate\Validation\Rule::unique('user_custom_link')->where(function ($query) {
+                    return $query->where('id_user', auth()->id());
+                })
+            ],
             'url_link' => 'required|url',
+        ], [
+            // INI PESAN KUSTOMNYA
+            'judul_link.unique' => 'Judul link ini sudah pernah Anda gunakan!', 
         ]);
 
         try {
@@ -140,28 +152,35 @@ class DashboardController extends Controller
             return back()->with('success', 'Link berhasil ditambahkan!');
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Kode 23000 adalah kode SQL untuk Integrity Constraint Violation 
-            // (termasuk pelanggaran UNIQUE constraint yang baru saja kamu buat)
-            if ($e->getCode() == 23000) {
-                return back()->withErrors(['msg' => 'Judul link ini sudah pernah kamu gunakan untuk akun Anda!']);
-            }
-            
-            // Jika error lain, lempar kembali atau tampilkan pesan umum
-            return back()->withErrors(['msg' => 'Terjadi kesalahan pada database.']);
+            // Ini tetap dibiarkan untuk menangkap error database lain jika ada
+            throw $e; 
         }
     }
 
     // Mengupdate Custom Link (dengan deskripsi)
     public function updateCustomLink(Request $request, $id)
     {
+        $user = Auth::user();
+
         $request->validate([
-            'judul_link' => 'required|string|max:255',
+            'judul_link' => [
+                'required', 
+                'string', 
+                'max:255',
+                \Illuminate\Validation\Rule::unique('user_custom_link', 'judul_link')
+                    ->where('id_user', $user->id)
+                    ->ignore($id)
+            ],
             'url_link' => 'required|url',
+        ], [
+            // PESAN KUSTOM UNTUK UPDATE
+            'judul_link.unique' => 'Judul link ini sudah pernah Anda gunakan!', 
         ]);
 
+    try {
         DB::table('user_custom_link')
             ->where('id', $id)
-            ->where('id_user', Auth::user()->id) 
+            ->where('id_user', $user->id) 
             ->update([
                 'judul_link' => $request->judul_link,
                 'url_link' => $request->url_link,
@@ -170,6 +189,9 @@ class DashboardController extends Controller
             ]);
 
         return back()->with('success', 'Link berhasil diperbarui!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            throw $e;
+        }
     }
 
     // Menghapus Custom Link

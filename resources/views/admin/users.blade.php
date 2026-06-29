@@ -178,9 +178,6 @@
                                 @if($item->id == auth()->id())
                                 <span class="text-you">(Anda)</span>
                                 @endif
-                                @if($item->nama)
-                                <br><small class="text-muted">{{ $item->nama }}</small>
-                                @endif
                             </div>
                         </div>
                     </td>

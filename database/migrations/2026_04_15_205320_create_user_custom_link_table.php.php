@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('deskripsi');
             
             $table->timestamps();
+            $table->unique(['id_user', 'judul_link'], 'uk_user_judul_link');
         });
     }
 
