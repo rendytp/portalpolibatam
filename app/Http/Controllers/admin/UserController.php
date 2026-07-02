@@ -15,7 +15,6 @@ class UserController extends Controller
             ->select('users.*', DB::raw('COUNT(user_favorit.id) as jumlah_bookmark'))
             ->groupBy(
                 'users.id',
-                'users.nama',
                 'users.username',
                 'users.password',
                 'users.role',
