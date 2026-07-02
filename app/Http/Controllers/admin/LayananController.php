@@ -14,10 +14,7 @@ class LayananController extends Controller
     {
         $data = DB::table('layanan')
             ->leftJoin('kategori', 'layanan.id_kategori', '=', 'kategori.id')
-            ->select(
-                'layanan.*',
-                'kategori.nama as kategori'
-            )
+            ->select('layanan.*', 'kategori.nama as kategori')
             ->latest('layanan.id')
             ->get();
 
@@ -26,7 +23,7 @@ class LayananController extends Controller
         return view('admin.layanan', compact('data', 'kategori'));
     }
 
-    private function checkUrlStatus($url)
+    public function checkUrlStatus($url)
     {
         try {
             $response = Http::withHeaders([
@@ -40,16 +37,39 @@ class LayananController extends Controller
             $status = $response->status();
 
             if ($status >= 200 && $status < 400) {
-                return 1; // Aktif (200 - 399 termasuk redirect)
+                return 1; // Aktif (200–399 termasuk redirect)
             } elseif ($status >= 500) {
-                return 2; // Gangguan (500 server error)
+                return 2; // Gangguan (server error 500+)
             } else {
-                return 0; // Nonaktif (400 - 499 not found/forbidden)
+                return 0; // Nonaktif (404, 403, dst)
             }
         } catch (ConnectionException $e) {
-            return 2; // Timeout / koneksi ditolak = Gangguan
+            // Bedakan timeout vs connection refused
+            $message = strtolower($e->getMessage());
+
+            if (
+                str_contains($message, 'timed out') ||
+                str_contains($message, 'timeout') ||
+                str_contains($message, 'operation timed')
+            ) {
+                // Server ada tapi lambat/tidak merespons = Gangguan
+                return 2;
+            }
+
+            // Connection refused / host not found / DNS error = web mati = Nonaktif
+            return 0;
         } catch (\Exception $e) {
-            return 2; // Error lain = Gangguan
+            $message = strtolower($e->getMessage());
+
+            if (
+                str_contains($message, 'timed out') ||
+                str_contains($message, 'timeout')
+            ) {
+                return 2; // Gangguan
+            }
+
+            // Semua error lain (DNS gagal, connection refused, dsb) = Nonaktif
+            return 0;
         }
     }
 
