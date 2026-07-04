@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kategori;
+use App\Models\Layanan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
 
@@ -12,13 +13,14 @@ class LayananController extends Controller
 {
     public function index()
     {
-        $data = DB::table('layanan')
-            ->leftJoin('kategori', 'layanan.id_kategori', '=', 'kategori.id')
-            ->select('layanan.*', 'kategori.nama as kategori')
-            ->latest('layanan.id')
+        // Sebelumnya: DB::table('layanan')->leftJoin('kategori', ...)->select(...)
+        // "kategoriRelation" di-eager-load agar $item->kategori (accessor di model)
+        // tidak memicu query tambahan per baris (hindari N+1).
+        $data = Layanan::with('kategoriRelation')
+            ->latest('id')
             ->get();
 
-        $kategori = DB::table('kategori')->get();
+        $kategori = Kategori::all();
 
         return view('admin.layanan', compact('data', 'kategori'));
     }
@@ -44,7 +46,6 @@ class LayananController extends Controller
                 return 0; // Nonaktif (404, 403, dst)
             }
         } catch (ConnectionException $e) {
-            // Bedakan timeout vs connection refused
             $message = strtolower($e->getMessage());
 
             if (
@@ -52,12 +53,10 @@ class LayananController extends Controller
                 str_contains($message, 'timeout') ||
                 str_contains($message, 'operation timed')
             ) {
-                // Server ada tapi lambat/tidak merespons = Gangguan
-                return 2;
+                return 2; // Server ada tapi lambat/tidak merespons = Gangguan
             }
 
-            // Connection refused / host not found / DNS error = web mati = Nonaktif
-            return 0;
+            return 0; // Connection refused / host not found / DNS error = Nonaktif
         } catch (\Exception $e) {
             $message = strtolower($e->getMessage());
 
@@ -68,15 +67,14 @@ class LayananController extends Controller
                 return 2; // Gangguan
             }
 
-            // Semua error lain (DNS gagal, connection refused, dsb) = Nonaktif
-            return 0;
+            return 0; // Semua error lain = Nonaktif
         }
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id_kategori' => 'required',
+            'id_kategori' => 'required|exists:kategori,id',
             'nama'        => 'required|string|max:255',
             'url'         => 'required|url',
             'deskripsi'   => 'nullable|string|max:500',
@@ -84,14 +82,12 @@ class LayananController extends Controller
 
         $statusOtomatis = $this->checkUrlStatus($request->url);
 
-        DB::table('layanan')->insert([
+        Layanan::create([
             'id_kategori' => $request->id_kategori,
             'nama'        => $request->nama,
             'deskripsi'   => $request->deskripsi,
             'url'         => $request->url,
             'is_active'   => $statusOtomatis,
-            'created_at'  => now(),
-            'updated_at'  => now(),
         ]);
 
         return back()->with('success', 'Layanan ditambahkan & Status dicek otomatis!');
@@ -100,33 +96,30 @@ class LayananController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_kategori' => 'required',
+            'id_kategori' => 'required|exists:kategori,id',
             'nama'        => 'required|string|max:255',
             'url'         => 'required|url',
             'deskripsi'   => 'nullable|string|max:500',
         ]);
 
+        $layanan = Layanan::findOrFail($id);
+
         $statusOtomatis = $this->checkUrlStatus($request->url);
 
-        DB::table('layanan')
-            ->where('id', $id)
-            ->update([
-                'id_kategori' => $request->id_kategori,
-                'nama'        => $request->nama,
-                'deskripsi'   => $request->deskripsi,
-                'url'         => $request->url,
-                'is_active'   => $statusOtomatis,
-                'updated_at'  => now(),
-            ]);
+        $layanan->update([
+            'id_kategori' => $request->id_kategori,
+            'nama'        => $request->nama,
+            'deskripsi'   => $request->deskripsi,
+            'url'         => $request->url,
+            'is_active'   => $statusOtomatis,
+        ]);
 
         return back()->with('success', 'Layanan diupdate & Status diperbarui otomatis!');
     }
 
     public function destroy($id)
     {
-        DB::table('layanan')
-            ->where('id', $id)
-            ->delete();
+        Layanan::findOrFail($id)->delete();
 
         return back()->with('success', 'Berhasil hapus layanan');
     }

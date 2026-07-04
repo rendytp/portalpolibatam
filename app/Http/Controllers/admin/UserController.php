@@ -4,33 +4,35 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $data = DB::table('users')
-            ->leftJoin('user_favorit', 'users.id', '=', 'user_favorit.id_user')
-            ->select('users.*', DB::raw('COUNT(user_favorit.id) as jumlah_bookmark'))
-            ->groupBy(
-                'users.id',
-                'users.username',
-                'users.password',
-                'users.role',
-                'users.remember_token',
-                'users.created_at',
-                'users.updated_at'
-            )
-            ->orderBy('users.created_at', 'desc')
-            ->get();
+        $data = User::withCount('favorit as jumlah_bookmark')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
 
         return view('admin.users', compact('data'));
     }
 
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        User::destroy($id);
-        return back()->with('success', 'User dihapus');
+        // Cegah admin menghapus akunnya sendiri
+        if ($id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $user = User::find($id);
+
+        if (! $user) {
+            return back()->with('error', 'User tidak ditemukan.');
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'User berhasil dihapus.');
     }
 }

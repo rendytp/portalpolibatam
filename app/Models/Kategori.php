@@ -9,13 +9,21 @@ class Kategori extends Model
 {
     use HasFactory;
 
-    // Sesuaikan dengan nama tabel di database Anda (misal: 'kategori' atau 'kategoris')
-    protected $table = 'kategori'; 
+    protected $table = 'kategori';
     protected $primaryKey = 'id';
 
-    // Jika primary key bukan 'id', tentukan di sini. 
-    // Berdasarkan ERD Anda, sepertinya menggunakan 'id' atau 'id_kategori'
-    // protected $primaryKey = 'id_kategori'; 
+    // Diganti dari $guarded = [] ke $fillable eksplisit supaya lebih aman
+    // (mass-assignment hanya diperbolehkan untuk kolom yang memang dikirim dari form).
+    protected $fillable = [
+        'nama',
+        'deskripsi',
+    ];
 
-    protected $guarded = []; // Mengizinkan mass-assignment
+    /**
+     * Relasi: satu kategori punya banyak layanan.
+     */
+    public function layanan()
+    {
+        return $this->hasMany(Layanan::class, 'id_kategori', 'id');
+    }
 }
