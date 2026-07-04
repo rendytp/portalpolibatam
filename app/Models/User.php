@@ -27,8 +27,16 @@ class User extends Authenticatable
     {
         return [
             // email_verified_at bisa dibiarkan atau dihapus karena kita tidak pakai email
-            'email_verified_at' => 'datetime', 
+            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke tabel user_favorit (satu user bisa punya banyak favorit).
+     */
+    public function favorit()
+    {
+        return $this->hasMany(UserFavorit::class, 'id_user');
     }
 }
