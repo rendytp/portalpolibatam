@@ -1,6 +1,6 @@
 # Portal Polibatam
 
-Portal Polibatam adalah aplikasi web berbasis **Laravel** (PHP) yang dikembangkan untuk mendukung kebutuhan informasi dan layanan di lingkungan **Politeknik Negeri Batam**. Proyek ini menggunakan struktur MVC standar Laravel dengan Blade sebagai template engine.
+Portal Polibatam adalah aplikasi web berbasis **Laravel** (PHP) yang dikembangkan sebagai portal terpusat untuk berbagai layanan digital di lingkungan **Politeknik Negeri Batam**, seperti KRS Online dan Pembayaran UKT. Layanan-layanan tersebut dikelompokkan ke dalam beberapa kategori (Akademik, Keuangan, Kemahasiswaan) dan dapat dikelola melalui sistem dengan role pengguna (`admin` dan `user`). Proyek ini menggunakan struktur MVC standar Laravel dengan Blade sebagai template engine.
 
 ## 🚀 Tech Stack
 
@@ -94,6 +94,36 @@ Pastikan sudah terinstall **PHP >= 8.1**, **Composer**, **Node.js & NPM**, serta
    ```
 
    Aplikasi dapat diakses di `http://127.0.0.1:8000`.
+
+## 👤 Akun Default
+
+Akun default dibuat otomatis melalui `DatabaseSeeder` saat menjalankan `php artisan migrate --seed` atau `php artisan db:seed`.
+
+| username        | Role       | Password |
+|-----------------|------------|----------|
+| Admin           | Admin      | `admin`  |
+| User            | Mahasiswa  | `123`    |
+
+> ⚠️ **Catatan:** Password di atas hanya untuk keperluan development/demo. Wajib diganti dengan password yang kuat sebelum aplikasi digunakan di environment production.
+
+Selain akun, seeder juga otomatis mengisi data awal berupa **kategori** dan **layanan** portal, contohnya:
+
+| Kategori      | Layanan          | URL                              |
+|---------------|------------------|-----------------------------------|
+| Akademik      | KRS Online       | https://krs.polibatam.ac.id      |
+| Keuangan      | Pembayaran UKT   | https://ukt.polibatam.ac.id      |
+
+Jalankan seeder dengan perintah:
+
+```bash
+php artisan db:seed
+```
+
+atau sekaligus dengan migrasi:
+
+```bash
+php artisan migrate --seed
+```
 
 ## 🧪 Menjalankan Test
 
