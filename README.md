@@ -1,58 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Portal Polibatam
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Portal Polibatam adalah aplikasi web berbasis **Laravel** (PHP) yang dikembangkan untuk mendukung kebutuhan informasi dan layanan di lingkungan **Politeknik Negeri Batam**. Proyek ini menggunakan struktur MVC standar Laravel dengan Blade sebagai template engine.
 
-## About Laravel
+## 🚀 Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Backend:** PHP, Laravel Framework
+- **Frontend:** Blade Template, Vite
+- **Database:** MySQL (atau sesuai konfigurasi `.env`)
+- **Package Manager:** Composer (PHP), NPM (JavaScript)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📁 Struktur Direktori
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+portalpolibatam/
+├── app/            # Logic aplikasi (Controller, Model, dll)
+├── bootstrap/      # File bootstrap Laravel
+├── config/         # File konfigurasi aplikasi
+├── database/       # Migration, seeder, dan factory
+├── public/         # Entry point aplikasi & asset publik
+├── resources/      # View (Blade), asset frontend (CSS/JS)
+├── routes/         # Definisi routing aplikasi
+├── storage/        # File log, cache, dan upload
+├── tests/          # Unit & feature testing
+├── artisan         # CLI Laravel
+├── composer.json   # Dependency PHP
+└── package.json    # Dependency JavaScript
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## ⚙️ Instalasi
 
-## Contributing
+Pastikan sudah terinstall **PHP >= 8.1**, **Composer**, **Node.js & NPM**, serta database (misal MySQL).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/rendytp/portalpolibatam.git
+   cd portalpolibatam
+   ```
 
-## Code of Conduct
+2. **Install dependency PHP**
+   ```bash
+   composer install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Install dependency JavaScript**
+   ```bash
+   npm install
+   ```
 
-## Security Vulnerabilities
+4. **Salin file environment**
+   ```bash
+   cp .env.example .env
+   ```
+   > Jika file `.env.example` belum ada, sesuaikan langsung file `.env` yang tersedia dengan konfigurasi lokal Anda.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Generate application key**
+   ```bash
+   php artisan key:generate
+   ```
 
-## License
+6. **Konfigurasi database**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   Sesuaikan kredensial database pada file `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=portalpolibatam
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+7. **Jalankan migrasi database**
+   ```bash
+   php artisan migrate
+   ```
+   Tambahkan `--seed` jika terdapat seeder data awal:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+8. **Build asset frontend**
+   ```bash
+   npm run dev
+   ```
+   atau untuk production:
+   ```bash
+   npm run build
+   ```
+
+9. **Jalankan server lokal**
+   ```bash
+   php artisan serve
+   ```
+
+   Aplikasi dapat diakses di `http://127.0.0.1:8000`.
+
+## 🧪 Menjalankan Test
+
+```bash
+php artisan test
+```
+
+atau menggunakan PHPUnit langsung:
+
+```bash
+./vendor/bin/phpunit
+```
+
+## 🤝 Kontribusi
+
+Kontribusi sangat terbuka untuk pengembangan Portal Polibatam:
+
+1. Fork repository ini
+2. Buat branch baru (`git checkout -b fitur-baru`)
+3. Commit perubahan (`git commit -m 'Menambahkan fitur baru'`)
+4. Push ke branch (`git push origin fitur-baru`)
+5. Buat Pull Request
+
+## 📄 Lisensi
+
+Proyek ini dibangun di atas framework [Laravel](https://laravel.com), yang bersifat open-source dan dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
+
+## 📬 Kontak
+
+Untuk pertanyaan, saran, atau laporan bug, silakan buka [issue](https://github.com/rendytp/portalpolibatam/issues) di repository ini.
