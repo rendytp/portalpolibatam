@@ -14,18 +14,16 @@ class DatabaseSeeder extends Seeder
     {
         DB::table('user')->insert([
             [
-                'nama' => 'Admin Sistem',
                 'username' => 'admin',
                 'password' => bcrypt('admin'),
-                'role' => 'admin',
+                'role' => 'Admin',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'nama' => 'Rendy Tri Putra',
-                'username' => 'rendy',
+                'username' => 'user',
                 'password' => bcrypt('123'),
-                'role' => 'user',
+                'role' => 'Mahasiswa',
                 'created_at' => now(),
                 'updated_at' => now()
             ]
