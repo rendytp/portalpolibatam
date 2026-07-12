@@ -11,10 +11,30 @@
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto mb-10 text-center">
-        <form action="{{ route('cari') }}" method="GET">
-            <input type="text" name="q" value="{{ $keyword }}" placeholder="Cari berdasarkan nama, kategori, atau deskripsi..." class="w-full px-8 py-5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-500 text-lg transition text-center shadow-sm">
+    <div class="max-w-5xl mx-auto mb-10 text-center">
+        <form action="{{ route('cari') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center">
+            
+            <div class="relative w-full md:w-1/3">
+                <select name="kategori" onchange="this.form.submit()" class="w-full px-6 py-5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-500 text-lg transition shadow-sm appearance-none cursor-pointer">
+                    <option value="">Semua Kategori</option>
+                    @foreach($kategoris as $kat)
+                        <option value="{{ $kat->id }}" {{ request('kategori') == $kat->id ? 'selected' : '' }}>
+                            {{ $kat->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-slate-500">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+
+            <div class="relative w-full md:w-2/3 flex">
+                <input type="text" name="q" value="{{ $keyword }}" placeholder="Cari berdasarkan nama atau deskripsi..." class="w-full px-8 py-5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-500 text-lg transition shadow-sm">
+                <button type="submit" class="absolute right-2 top-2 bottom-2 px-6 bg-pink-500 hover:bg-pink-600 text-white rounded-full font-bold transition">Cari</button>
+            </div>
+            
         </form>
+        
         <div class="flex items-center mt-6 text-sm text-slate-500 justify-start pl-2">
             <span>Ditemukan <span class="font-bold text-pink-600">{{ count($layanans) }}</span> layanan</span>
         </div>

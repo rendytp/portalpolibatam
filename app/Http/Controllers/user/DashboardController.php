@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash; // WAJIB DITAMBAHKAN untuk enkripsi password
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
@@ -43,16 +43,26 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $keyword = $request->input('q');
+        $kategoriId = $request->input('kategori'); // Menangkap input dari dropdown
         
+        // Mengambil semua data kategori untuk opsi dropdown filter
+        $kategoris = DB::table('kategori')->get();
+
         $layanans = DB::table('layanan')
             ->leftJoin('kategori', 'layanan.id_kategori', '=', 'kategori.id')
             ->select('layanan.*', 'kategori.nama as nama_kategori');
 
+        // Filter berdasarkan Input Text (Keyword)
         if ($keyword) {
             $layanans = $layanans->where(function($query) use ($keyword) {
                 $query->where('layanan.nama', 'like', "%{$keyword}%")
                       ->orWhere('layanan.deskripsi', 'like', "%{$keyword}%");
             });
+        }
+
+        // Filter berdasarkan Dropdown Kategori
+        if ($kategoriId) {
+            $layanans = $layanans->where('layanan.id_kategori', $kategoriId);
         }
 
         $layanans = $layanans->get();
@@ -62,7 +72,8 @@ class DashboardController extends Controller
             ->pluck('id_layanan')
             ->toArray();
         
-        return view('user.cari-layanan', compact('layanans', 'keyword', 'favoritIds'));
+        // Pass $kategoris ke view
+        return view('user.cari-layanan', compact('layanans', 'keyword', 'favoritIds', 'kategoris'));
     }
 
     public function favorit()
@@ -108,7 +119,6 @@ class DashboardController extends Controller
     // FUNGSI UNTUK CUSTOM LINKS
     // ==========================================
     
-    // Menampilkan halaman Custom Links
     public function customLinks()
     {
         $user = Auth::user();
@@ -120,10 +130,8 @@ class DashboardController extends Controller
         return view('user.custom-links', compact('links'));
     }
 
-    // Menyimpan Custom Link Baru (dengan deskripsi)
     public function storeCustomLink(Request $request)
     {
-        // Tambahkan custom message di parameter ketiga
         $request->validate([
             'judul_link' => [
                 'required', 
@@ -135,7 +143,6 @@ class DashboardController extends Controller
             ],
             'url_link' => 'required|url',
         ], [
-            // INI PESAN KUSTOMNYA
             'judul_link.unique' => 'Judul link ini sudah pernah Anda gunakan!', 
         ]);
 
@@ -152,12 +159,10 @@ class DashboardController extends Controller
             return back()->with('success', 'Link berhasil ditambahkan!');
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Ini tetap dibiarkan untuk menangkap error database lain jika ada
             throw $e; 
         }
     }
 
-    // Mengupdate Custom Link (dengan deskripsi)
     public function updateCustomLink(Request $request, $id)
     {
         $user = Auth::user();
@@ -173,7 +178,6 @@ class DashboardController extends Controller
             ],
             'url_link' => 'required|url',
         ], [
-            // PESAN KUSTOM UNTUK UPDATE
             'judul_link.unique' => 'Judul link ini sudah pernah Anda gunakan!', 
         ]);
 
@@ -194,7 +198,6 @@ class DashboardController extends Controller
         }
     }
 
-    // Menghapus Custom Link
     public function deleteCustomLink($id)
     {
         DB::table('user_custom_link')
@@ -215,13 +218,11 @@ class DashboardController extends Controller
         return view('user.profil', compact('user'));
     }
 
-    // 1. Fungsi Update Username
     public function updateProfil(Request $request)
     {
         $user = Auth::user();
         
         $request->validate([
-            // Username wajib diisi, maksimal 255 karakter, dan tidak boleh sama dengan username milik orang lain
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
         ]);
 
@@ -233,25 +234,22 @@ class DashboardController extends Controller
         return back()->with('success', 'Username berhasil diperbarui!');
     }
 
-    // 2. Fungsi Update Password
     public function updatePassword(Request $request)
     {
         $user = Auth::user();
 
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed', // 'confirmed' butuh input 'new_password_confirmation'
+            'new_password' => 'required|min:6|confirmed',
         ], [
             'new_password.confirmed' => 'Konfirmasi password baru tidak cocok.',
             'new_password.min' => 'Password baru minimal harus 6 karakter.'
         ]);
 
-        // Cek apakah password lama yang dimasukkan benar
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'Password saat ini yang Anda masukkan salah.']);
         }
 
-        // Jika benar, update ke password baru
         DB::table('users')->where('id', $user->id)->update([
             'password' => Hash::make($request->new_password),
             'updated_at' => now()

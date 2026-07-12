@@ -54,7 +54,6 @@
             
             <h4 class="font-bold text-lg mb-1">{{ $layanan->nama }}</h4>
             
-            <!-- PERBAIKAN 1: Logika 3 Status pada Badge -->
             <div class="flex items-center gap-2 mb-3">
                 @if($layanan->is_active == 1)
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -74,7 +73,6 @@
                 <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full">{{ $layanan->nama_kategori ?? 'Umum' }}</span>
             </div>
             
-            <!-- PERBAIKAN 2: Logika 3 Status pada Tombol -->
             @if($layanan->is_active == 1)
                 <a href="{{ $layanan->url ? (str_starts_with($layanan->url, 'http') ? $layanan->url : 'https://' . $layanan->url) : '#' }}" 
                    target="_blank" 
@@ -92,12 +90,7 @@
     </div>
     @endif
 
-    <div class="flex flex-col md:flex-row gap-4 mb-8">
-        <input type="text" placeholder="Cari layanan..." class="flex-1 px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button class="px-8 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition">Semua Kategori</button>
-    </div>
-
-    <div class="flex items-center gap-3 mb-6">
+    <div class="flex items-center gap-3 mb-6 mt-4">
         <h3 class="text-xl font-bold">Semua Layanan</h3>
         <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full">{{ $totalLayanan }} layanan</span>
     </div>
