@@ -105,7 +105,10 @@
         <div class="col-lg-7">
             <div class="card shadow-sm border-0 rounded-4 h-100">
                 <div class="card-body p-4">
-                    <h4 class="fw-bold mb-4">Pertumbuhan Pengguna</h4>
+                    <h4 class="fw-bold mb-4">
+                        Pertumbuhan Pengguna
+                        <small class="text-muted fs-6 fw-normal ms-2">{{ now()->year }}</small>
+                    </h4>
                     <div style="height:320px;">
                         <canvas id="userChart"></canvas>
                     </div>
@@ -132,29 +135,33 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     var pertumbuhanUser = @json($pertumbuhanUser);
-    var namaLayanan     = @json($layananChart->pluck('nama'));
-    var totalLayanan    = @json($layananChart->pluck('total'));
+    var labelBulan = @json($labelBulan);
+    var namaLayanan = @json($layananChart -> pluck('nama'));
+    var totalLayanan = @json($layananChart -> pluck('total'));
 
     new Chart(document.getElementById('userChart'), {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            labels: labelBulan,
             datasets: [{
                 label: 'Jumlah Pengguna',
                 data: pertumbuhanUser,
                 borderColor: '#3b82f6',
-                backgroundColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.08)',
                 borderWidth: 3,
                 tension: 0.4,
                 pointRadius: 5,
-                fill: false
+                pointBackgroundColor: '#3b82f6',
+                fill: true
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: {
+                    display: false
+                }
             },
             scales: {
                 y: {
@@ -186,7 +193,9 @@
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'bottom' }
+                legend: {
+                    position: 'bottom'
+                }
             }
         }
     });

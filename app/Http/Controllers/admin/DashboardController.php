@@ -10,71 +10,64 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // =====================
-        // CARD STATISTIK
-        // =====================
+        $sekarang = Carbon::now();
 
-        $totalLayanan = DB::table('layanan')->count();
-
-        $totalKategori = DB::table('kategori')->count();
-
-        $totalUser = DB::table('users')->count();
-
+        // ── STATISTIK LAYANAN ──
+        $totalLayanan    = DB::table('layanan')->count();
+        $layananAktif    = DB::table('layanan')->where('is_active', 1)->count();
         $layananBulanIni = DB::table('layanan')
-            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', $sekarang->year)
+            ->whereMonth('created_at', $sekarang->month)
             ->count();
 
-        $layananAktif = DB::table('layanan')
-            ->where('is_active', 1)
-            ->count();
-
+        // ── STATISTIK USER ──
+        $totalUser    = DB::table('users')->count();
+        $userAktif    = DB::table('users')->where('role', 'Staff')->count();
         $userMingguIni = DB::table('users')
             ->whereBetween('created_at', [
-                Carbon::now()->startOfWeek(),
-                Carbon::now()->endOfWeek()
+                $sekarang->startOfWeek()->copy(),
+                $sekarang->endOfWeek()->copy(),
             ])
             ->count();
-
-        $userAktif = DB::table('users')->count();
 
         $persentaseUser = $totalUser > 0
             ? round(($userAktif / $totalUser) * 100)
             : 0;
 
-        // =====================
-        // LINE CHART
-        // =====================
+        // ── LABEL BULAN DINAMIS (sampai bulan sekarang) ──
+        $namaBulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $bulanSekarang = $sekarang->month; // 1–12
 
+        $labelBulan     = [];
         $pertumbuhanUser = [];
 
-        for ($bulan = 1; $bulan <= 6; $bulan++) {
+        for ($i = 1; $i <= $bulanSekarang; $i++) {
+            $labelBulan[] = $namaBulan[$i - 1];
 
-            $pertumbuhanUser[] = DB::table('users')
-                ->whereMonth('created_at', $bulan)
+            $jumlah = DB::table('users')
+                ->whereYear('created_at', $sekarang->year)
+                ->whereMonth('created_at', $i)
                 ->count();
+
+            $pertumbuhanUser[] = $jumlah;
         }
 
-        // =====================
-        // PIE CHART
-        // =====================
+        // ── PIE CHART LAYANAN PER KATEGORI ──
+        $layananChart = DB::table('layanan')
+            ->leftJoin('kategori', 'layanan.id_kategori', '=', 'kategori.id')
+            ->select('kategori.nama', DB::raw('COUNT(layanan.id) as total'))
+            ->groupBy('kategori.nama')
+            ->get();
 
-        $layananChart = DB::table('kategori')
-        ->leftJoin('layanan', 'kategori.id', '=', 'layanan.id_kategori')
-        ->select(
-            'kategori.nama',
-            DB::raw('COUNT(layanan.id) as total')
-        )
-        ->groupBy('kategori.nama')
-        ->get();
         return view('admin.dashboard', compact(
             'totalLayanan',
-            'totalKategori',
+            'layananAktif',
+            'layananBulanIni',
             'totalUser',
             'userAktif',
-            'layananBulanIni',
-            'layananAktif',
             'userMingguIni',
             'persentaseUser',
+            'labelBulan',
             'pertumbuhanUser',
             'layananChart'
         ));
