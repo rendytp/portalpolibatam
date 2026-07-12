@@ -101,8 +101,8 @@ Akun default dibuat otomatis melalui `DatabaseSeeder` saat menjalankan `php arti
 
 | username        | Role       | Password |
 |-----------------|------------|----------|
-| Admin           | Admin      | `admin`  |
-| User            | Mahasiswa  | `123`    |
+| Admin           | Admin      | `123456`  |
+| User            | Mahasiswa  | `123456`    |
 
 > ⚠️ **Catatan:** Password di atas hanya untuk keperluan development/demo. Wajib diganti dengan password yang kuat sebelum aplikasi digunakan di environment production.
 
