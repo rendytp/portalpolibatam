@@ -5,27 +5,23 @@ use Illuminate\Support\Facades\Route;
 // 1. IMPORT CONTROLLER USER & AUTH
 use App\Http\Controllers\user\HomeController;
 use App\Http\Controllers\auth\AuthController;
-// Kita beri nama alias "UserDashboardController"
 use App\Http\Controllers\user\DashboardController as UserDashboardController;
 
 // 2. IMPORT CONTROLLER ADMIN
-// Kita beri nama alias "AdminDashboardController"
 use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\LayananController;
 use App\Http\Controllers\admin\KategoriController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\LinkController;
-use App\Http\Controllers\admin\ProfilController; // Pastikan 'admin' huruf kecil agar sama dengan yang lain
+use App\Http\Controllers\admin\ProfilController;
 
 
 // ==========================================
 // RUTE GUEST (Belum Login)
 // ==========================================
 
-// Halaman Utama
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Halaman & Proses Auth (Login/Register)
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -42,13 +38,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cari-layanan', [UserDashboardController::class, 'cari'])->name('cari');
     Route::get('/favorit-saya', [UserDashboardController::class, 'favorit'])->name('favorit');
 
-    // PERBAIKAN CUSTOM LINKS: Menambahkan rute Update (PUT) dan Delete (DELETE)
     Route::get('/custom-links', [UserDashboardController::class, 'customLinks'])->name('custom.links');
     Route::post('/custom-links', [UserDashboardController::class, 'storeCustomLink'])->name('custom.links.store');
     Route::put('/custom-links/{id}', [UserDashboardController::class, 'updateCustomLink'])->name('custom.links.update');
     Route::delete('/custom-links/{id}', [UserDashboardController::class, 'deleteCustomLink'])->name('custom.links.delete');
 
-    // TAMPILAN PROFIL & PROSES UPDATE PROFIL USER
     Route::get('/profil-saya', [UserDashboardController::class, 'profil'])->name('profil');
     Route::put('/profil-saya/update', [UserDashboardController::class, 'updateProfil'])->name('profil.update');
     Route::put('/profil-saya/password', [UserDashboardController::class, 'updatePassword'])->name('profil.password');
@@ -70,6 +64,7 @@ Route::middleware(['auth', 'admin'])
         Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');
         Route::put('/layanan/{id}', [LayananController::class, 'update'])->name('layanan.update');
         Route::delete('/layanan/{id}', [LayananController::class, 'destroy'])->name('layanan.delete');
+        Route::post('/layanan/export', [LayananController::class, 'export'])->name('layanan.export'); // ← EKSPOR EXCEL
 
         // KATEGORI
         Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
