@@ -32,98 +32,91 @@ portalpolibatam/
 Pastikan sudah terinstall **PHP >= 8.1**, **Composer**, **Node.js & NPM**, serta database (misal MySQL).
 
 1. **Clone repository**
-   ```bash
+```bash
    git clone https://github.com/rendytp/portalpolibatam.git
    cd portalpolibatam
-   ```
+```
 
 2. **Install dependency PHP**
-   ```bash
+```bash
    composer install
-   ```
+```
 
-3. **Install dependency JavaScript**
-   ```bash
+3. **Install library export Excel (PhpSpreadsheet)**
+```bash
+   composer require phpoffice/phpspreadsheet
+```
+   > Library ini digunakan untuk fitur ekspor data layanan ke format `.xlsx` yang rapi dan terformat. Jika sudah menjalankan `composer install` dari repository yang sudah include dependency ini, langkah ini bisa dilewati.
+
+4. **Install dependency JavaScript**
+```bash
    npm install
-   ```
+```
 
-4. **Salin file environment**
-   ```bash
+5. **Salin file environment**
+```bash
    cp .env.example .env
-   ```
+```
    > Jika file `.env.example` belum ada, sesuaikan langsung file `.env` yang tersedia dengan konfigurasi lokal Anda.
 
-5. **Generate application key**
-   ```bash
+6. **Generate application key**
+```bash
    php artisan key:generate
-   ```
+```
 
-6. **Konfigurasi database**
+7. **Konfigurasi database**
 
    Sesuaikan kredensial database pada file `.env`:
-   ```env
+```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_DATABASE=portalpolibatam
    DB_USERNAME=root
    DB_PASSWORD=
-   ```
+```
 
-7. **Jalankan migrasi database**
-   ```bash
+8. **Jalankan migrasi database**
+```bash
    php artisan migrate
-   ```
+```
    Tambahkan `--seed` jika terdapat seeder data awal:
-   ```bash
+```bash
    php artisan migrate --seed
-   ```
+```
 
-8. **Build asset frontend**
-   ```bash
+9. **Build asset frontend**
+```bash
    npm run dev
-   ```
+```
    atau untuk production:
-   ```bash
+```bash
    npm run build
-   ```
+```
 
-9. **Jalankan server lokal**
-   ```bash
-   php artisan serve
-   ```
+10. **Jalankan server lokal**
+```bash
+    php artisan serve
+```
+    Aplikasi dapat diakses di `http://127.0.0.1:8000`.
 
-   Aplikasi dapat diakses di `http://127.0.0.1:8000`.
+## 📦 Dependency Penting
+
+| Package | Kegunaan |
+|---------|----------|
+| `laravel/framework` | Framework utama |
+| `phpoffice/phpspreadsheet` | Export data layanan ke Excel (.xlsx) |
 
 ## 👤 Akun Default
 
-Akun default dibuat otomatis melalui `DatabaseSeeder` saat menjalankan `php artisan migrate --seed` atau `php artisan db:seed`.
+Akun default dibuat otomatis melalui `DatabaseSeeder` saat menjalankan `php artisan migrate --seed`.
 
-| username        | Role       | Password |
-|-----------------|------------|----------|
-| Admin           | Admin      | `123456`  |
-| User            | Mahasiswa  | `123456`    |
+| Username | Role      | Password |
+|----------|-----------|----------|
+| admin    | Admin     | `123456` |
+| user     | Mahasiswa | `123456` |
 
-> ⚠️ **Catatan:** Password di atas hanya untuk keperluan development/demo. Wajib diganti dengan password yang kuat sebelum aplikasi digunakan di environment production.
-
-Selain akun, seeder juga otomatis mengisi data awal berupa **kategori** dan **layanan** portal, contohnya:
-
-| Kategori      | Layanan          | URL                              |
-|---------------|------------------|-----------------------------------|
-| Akademik      | KRS Online       | https://krs.polibatam.ac.id      |
-| Keuangan      | Pembayaran UKT   | https://ukt.polibatam.ac.id      |
-
-Jalankan seeder dengan perintah:
-
-```bash
-php artisan db:seed
-```
-
-atau sekaligus dengan migrasi:
-
-```bash
-php artisan migrate --seed
-```
+> ⚠️ **Catatan:** Password di atas hanya untuk keperluan development/demo. Wajib diganti sebelum digunakan di production.
 
 ## 🧪 Menjalankan Test
 
@@ -131,15 +124,7 @@ php artisan migrate --seed
 php artisan test
 ```
 
-atau menggunakan PHPUnit langsung:
-
-```bash
-./vendor/bin/phpunit
-```
-
 ## 🤝 Kontribusi
-
-Kontribusi sangat terbuka untuk pengembangan Portal Polibatam:
 
 1. Fork repository ini
 2. Buat branch baru (`git checkout -b fitur-baru`)
@@ -149,8 +134,8 @@ Kontribusi sangat terbuka untuk pengembangan Portal Polibatam:
 
 ## 📄 Lisensi
 
-Proyek ini dibangun di atas framework [Laravel](https://laravel.com), yang bersifat open-source dan dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
+Dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
 
 ## 📬 Kontak
 
-Untuk pertanyaan, saran, atau laporan bug, silakan buka [issue](https://github.com/rendytp/portalpolibatam/issues) di repository ini.
+Buka [issue](https://github.com/rendytp/portalpolibatam/issues) di repository ini.
